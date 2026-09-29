@@ -3,12 +3,13 @@ from __future__ import annotations
 import os
 import time
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 
 from . import metrics
-from .mock_llm import FakeLLM
+from .mock_llm import FakeLLM, FakeResponse
 from .mock_rag import retrieve
 from .pii import hash_user_id, summarize_text
-from .prompt_management import resolve_prompt
+from .prompt_management import ResolvedPrompt, resolve_prompt
 from .tracing import get_langfuse_client, observe, propagate_attributes, tracing_enabled
 
 
@@ -51,7 +52,7 @@ class LabAgent:
             },
         ):
             started = time.perf_counter()
-            docs = retrieve(message)
+            docs = self._retrieve(langfuse_client, message)
             prompt = resolve_prompt(
                 langfuse_client,
                 feature=feature,
@@ -71,13 +72,10 @@ class LabAgent:
                 },
                 version=prompt.version,
             )
-            # TODO (CP2): instrument retrieve() and FakeLLM.generate() as child
-            # observations. The nested generation must receive prompt, usage and cost.
             with propagate_attributes(prompt=prompt.managed_prompt):
-                response = self.llm.generate(prompt.text)
+                response, cost_usd = self._generate(langfuse_client, prompt)
             quality_score = self._heuristic_quality(message, response.text, docs)
             latency_ms = int((time.perf_counter() - started) * 1000)
-            cost_usd = self._estimate_cost(response.usage.input_tokens, response.usage.output_tokens)
 
         metrics.record_request(
             latency_ms=latency_ms,
@@ -97,6 +95,46 @@ class LabAgent:
             cost_usd=cost_usd,
             quality_score=quality_score,
         )
+
+    def _retrieve(self, langfuse_client, message: str) -> list[str]:
+        with langfuse_client.start_as_current_observation(
+            name="retrieval",
+            as_type="retriever",
+            input={"query_preview": summarize_text(message)},
+        ) as span:
+            try:
+                docs = retrieve(message)
+            except Exception as exc:
+                span.update(level="ERROR", status_message=f"{type(exc).__name__}: {exc}")
+                raise
+            span.update(output={"doc_count": len(docs)}, metadata={"tool_success": True})
+            return docs
+
+    def _generate(self, langfuse_client, prompt: ResolvedPrompt) -> tuple[FakeResponse, float]:
+        with langfuse_client.start_as_current_observation(
+            name="llm-generation",
+            as_type="generation",
+            model=self.model,
+            prompt=prompt.managed_prompt,
+        ) as generation:
+            started_at = datetime.now(timezone.utc)
+            response = self.llm.generate(prompt.text)
+            usage = response.usage
+            cost_usd = self._estimate_cost(usage.input_tokens, usage.output_tokens)
+            # Only sanitized previews go to Langfuse; the compiled prompt contains the raw user message.
+            generation.update(
+                input=summarize_text(prompt.text, max_len=200),
+                output=summarize_text(response.text, max_len=200),
+                completion_start_time=started_at + timedelta(milliseconds=response.ttft_ms),
+                usage_details={"input": usage.input_tokens, "output": usage.output_tokens},
+                cost_details={
+                    "input": self._estimate_cost(usage.input_tokens, 0),
+                    "output": self._estimate_cost(0, usage.output_tokens),
+                    "total": cost_usd,
+                },
+                metadata={"prompt_version": prompt.version, "prompt_source": prompt.source},
+            )
+            return response, cost_usd
 
     def _estimate_cost(self, tokens_in: int, tokens_out: int) -> float:
         input_cost = (tokens_in / 1_000_000) * 3
