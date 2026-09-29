@@ -1,0 +1,15 @@
+# CP2 - 2026-09-29 14:48 +0700 - project Langfuse day13-k4-l3a-2A202602922
+$ python scripts/prompt_labels.py status
+day13-chat v1: labels=['production', 'baseline']
+day13-chat v2: labels=['candidate', 'latest']
+
+# Nội dung v1 và v2 (tạo bằng python scripts/prompt_labels.py setup)
+--- v1 (baseline) ---
+Feature={{feature}}
+Docs={{docs}}
+Question={{message}}
+--- v2 (candidate) ---
+Answer in at most 3 short bullet points, using only the docs below.
+Feature={{feature}}
+Docs={{docs}}
+Question={{message}}

@@ -1,0 +1,8 @@
+# CP1 - 2026-09-29 14:24 +0700 - base commit 13b6066 + CP1 working tree
+# Log records chứa [REDACTED_*] (input gốc có PII trong data/sample_queries.jsonl)
+{"service": "api", "payload": {"message_preview": "What is your refund policy? My email is [REDACTED_EMAIL]"}, "event": "request_received", "env": "dev", "model": "claude-sonnet-4-5", "correlation_id": "req-4749c72d", "feature": "qa", "user_id_hash": "2055254ee30a", "session_id": "s01", "level": "info", "ts": "2026-09-29T07:24:02.652603Z"}
+{"service": "api", "payload": {"message_preview": "Here is my phone [REDACTED_PHONE_VN], what should be logged?"}, "event": "request_received", "env": "dev", "model": "claude-sonnet-4-5", "correlation_id": "req-e699bb0a", "feature": "qa", "user_id_hash": "64f6ec689229", "session_id": "s05", "level": "info", "ts": "2026-09-29T07:24:05.161214Z"}
+{"service": "api", "payload": {"message_preview": "What is the policy for PII and credit card [REDACTED_CREDIT_CARD]?"}, "event": "request_received", "env": "dev", "model": "claude-sonnet-4-5", "correlation_id": "req-50f2b3e6", "feature": "qa", "user_id_hash": "4d14d5d4f719", "session_id": "s09", "level": "info", "ts": "2026-09-29T07:24:06.904002Z"}
+
+# Tìm PII thô trong log (kỳ vọng 0 dòng):
+0

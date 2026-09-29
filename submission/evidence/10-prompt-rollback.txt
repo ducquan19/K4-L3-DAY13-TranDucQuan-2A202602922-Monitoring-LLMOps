@@ -1,0 +1,23 @@
+# CP2 prompt label flow - 2026-09-29 14:43:08 +0700
+
+$ python scripts/prompt_labels.py status   # trước khi đổi label
+day13-chat v1: labels=['baseline', 'production']
+day13-chat v2: labels=['candidate', 'latest']
+
+$ python scripts/prompt_labels.py promote 2
+Đã chuyển label production sang v2.
+day13-chat v1: labels=['baseline']
+day13-chat v2: labels=['production', 'candidate', 'latest']
+{"answer":"Starter answer. You should improve this output logic and add better quality checks. Use retrieved context and keep responses concise.","correlation_id":"req-a2000003","latency_ms":1146,"ttft_ms":50,"tokens_in":49,"tokens_out":167,"cost_usd":0.002652,"quality_score":0.8}
+$ python scripts/prompt_labels.py promote 1   # rollback
+Đã chuyển label production sang v1.
+day13-chat v1: labels=['production', 'baseline']
+day13-chat v2: labels=['candidate', 'latest']
+{"answer":"Starter answer. You should improve this output logic and add better quality checks. Use retrieved context and keep responses concise.","correlation_id":"req-a1000004","latency_ms":1080,"ttft_ms":50,"tokens_in":32,"tokens_out":178,"cost_usd":0.002766,"quality_score":0.8}
+
+# Trace của cùng input 'Explain why metrics traces and logs work together' (session s_prompt_ab)
+# Lấy từ Langfuse API GET /api/public/v2/observations; cột: giờ UTC, trace ID, correlation_id, label, version, source | observations | generation
+07:42:52 f9f084e706d0528a45026e01b1798592 req-b1000001 baseline v1 langfuse | obs: ['lab-agent-run:AGENT:DEFAULT', 'llm-generation:GENERATION:DEFAULT', 'retrieval:RETRIEVER:DEFAULT'] | gen prompt: day13-chat 1 usage: {'input': 32, 'output': 158, 'total': 190} cost: {'input': 9.6e-05, 'output': 0.00237, 'total': 0.002466} ttft: None
+07:42:53 c3b3b13d4e57c3044609e5127b1ce916 req-c2000002 candidate v2 langfuse | obs: ['lab-agent-run:AGENT:DEFAULT', 'llm-generation:GENERATION:DEFAULT', 'retrieval:RETRIEVER:DEFAULT'] | gen prompt: day13-chat 2 usage: {'input': 49, 'output': 84, 'total': 133} cost: {'input': 0.000147, 'output': 0.00126, 'total': 0.001407} ttft: None
+07:43:16 7b97aae167a9df14888e761a2a1b0ad5 req-a2000003 production v2 langfuse | obs: ['lab-agent-run:AGENT:DEFAULT', 'llm-generation:GENERATION:DEFAULT', 'retrieval:RETRIEVER:DEFAULT'] | gen prompt: day13-chat 2 usage: {'input': 49, 'output': 167, 'total': 216} cost: {'input': 0.000147, 'output': 0.002505, 'total': 0.002652} ttft: None
+07:43:32 90c0ccc991ec1043ef7288646fda39fe req-a1000004 production v1 langfuse | obs: ['lab-agent-run:AGENT:DEFAULT', 'llm-generation:GENERATION:DEFAULT', 'retrieval:RETRIEVER:DEFAULT'] | gen prompt: day13-chat 1 usage: {'input': 32, 'output': 178, 'total': 210} cost: {'input': 9.6e-05, 'output': 0.00267, 'total': 0.002766} ttft: None

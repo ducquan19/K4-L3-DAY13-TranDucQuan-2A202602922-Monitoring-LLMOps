@@ -1,0 +1,9 @@
+# CP2 - 2026-09-29 14:53 +0700
+$ python scripts/build_dashboard.py
+data\dashboard.html | 713 records | 13:54–14:54
+  latency  p95=2654 ms (≤ 3000) OK
+  traffic  rate_per_minute=11.6/min (≥ 1) OK
+  errors   error_rate_pct=0.0% (≤ 2) OK
+  cost     total=$0.7027 (≤ 2.5) OK
+  tokens   sum_by_field=56,170 (≤ 50000) BREACH
+  quality  mean=0.88 (≥ 0.75) OK
