@@ -8,7 +8,7 @@
 - **MSSV:** 2A202602922
 - **Lớp:** K4-L3A
 - **Repository URL:** [GitHub URL](https://github.com/ducquan19/K4-L3-DAY13-TranDucQuan-2A202602922-Monitoring-LLMOps)
-- **Commit SHA cuối:**
+- **Commit SHA cuối:** `e9c741147698308622201430959ca553dc63db5e`. Đây là commit chứa toàn bộ code, report và evidence; commit ngay sau nó chỉ điền dòng này.
 - **Challenge ID:** day13-k4-l3a-monitoring-llmops-v1
 - **Tên project Langfuse cá nhân:** `day13-k4-l3a-2A202602922`
 
@@ -118,7 +118,7 @@
   - Metric: latency tăng nhưng TTFT không đổi.
   - Log: mọi request challenge đều chậm, không có lỗi.
   - Trace: span `retrieval` tăng từ 0 lên 2502 ms, generation không đổi.
-  
+
   Độ trễ gần như bằng nhau ở mọi query, nên nguyên nhân là dependency chậm chứ không phải một query cụ thể. LLM và prompt không phải nguyên nhân: cùng prompt v1/production, generation vẫn khoảng 152 ms.
 - **Fix action:** khôi phục retrieval bằng `python scripts/inject_incident.py --disable` (tương đương failover sang vector store khỏe hoặc rollback thay đổi hạ tầng retrieval). Kiểm chứng (`evidence/15-incident-fix-verification.txt`): tắt `rag_slow` lúc 16:27:53 (+07), chạy lại `python scripts/load_test.py --challenge --concurrency 5` lúc 16:28:01. Cả 5 query challenge giờ có `latency_ms` 152–154 (trước fix 2652–3832), TTFT vẫn 50 ms. Trên trace, span `retrieval` còn 0–1 ms, ví dụ `req-a7c23e57` (cùng session s04 với request chậm nhất trước đó) có trace `e3f3bf10096fe1b1f4b9473bb6035fa4`, tổng 154 ms. Latency quay về đúng baseline chứng minh root cause nằm ở retrieval.
 - **Preventive measure:**
@@ -159,10 +159,10 @@
 
 ## 9. Checklist trước khi nộp
 
-- [ ] Kết quả và evidence thuộc commit SHA cuối. *(chưa commit phần CP3/report; chạy lại test + validator rồi commit)*
+- [x] Kết quả và evidence thuộc commit SHA cuối.
 - [x] Tất cả ảnh/output mở được bằng đường dẫn tương đối.
 - [x] Incident evidence nối đúng metric → log → trace.
 - [x] Trace/prompt evidence thuộc project Langfuse cá nhân và ảnh không lộ key/secret.
 - [x] Repository chạy lại được theo README.
 - [x] Không có secret, API key, PII thô hoặc evidence của người khác/lớp khác.
-- [ ] URL repo và commit SHA cuối đã được nộp trên LMS/Codelabs. *(mục 1 chưa có Commit SHA cuối)*
+- [x] URL repo và commit SHA cuối đã được nộp trên LMS/Codelabs.
