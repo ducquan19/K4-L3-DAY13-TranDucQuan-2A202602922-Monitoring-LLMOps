@@ -85,7 +85,10 @@ def compute_panels(records: list[dict]) -> dict[str, dict]:
         n = len(recv_by_min.get(m, []))
         return 100 * len(fail_by_min.get(m, [])) / n if n else None
 
-    span_minutes = max(1.0, (records[-1]["_ts"] - records[0]["_ts"]).total_seconds() / 60) if records else 1.0
+    # Rate tính trên khoảng thời gian có traffic, không tính các event hệ thống như app_started.
+    span_minutes = (
+        max(1.0, (received[-1]["_ts"] - received[0]["_ts"]).total_seconds() / 60) if received else 1.0
+    )
     latencies = [r["latency_ms"] for r in sent if r.get("latency_ms") is not None]
     ttfts = [r["ttft_ms"] for r in sent if r.get("ttft_ms") is not None]
     qualities = [r["quality_score"] for r in sent if r.get("quality_score") is not None]

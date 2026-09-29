@@ -64,3 +64,15 @@ def test_build_writes_six_panels_and_ignores_records_outside_range(tmp_path: Pat
     assert page.count('<section class="panel">') == 6
     assert "6 records" in summary  # request_failed ở phút thứ 2 nằm ngoài time range
     assert "errors   error_rate_pct=0.0%" in summary
+
+
+def test_traffic_rate_ignores_non_request_events(tmp_path: Path) -> None:
+    log_path = tmp_path / "logs.jsonl"
+    events = [{"event": "app_started", "ts": START.isoformat()}] + [
+        {"event": "request_received", "ts": (START + timedelta(minutes=50, seconds=10 * i)).isoformat()}
+        for i in range(5)
+    ]
+    log_path.write_text("\n".join(json.dumps(e) for e in events), encoding="utf-8")
+    panels = compute_panels(load_records(log_path, START, START + timedelta(hours=1)))
+
+    assert panels["traffic"]["stats"]["rate_per_minute"] == 5.0

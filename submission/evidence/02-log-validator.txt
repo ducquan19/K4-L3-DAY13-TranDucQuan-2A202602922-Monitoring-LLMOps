@@ -1,10 +1,10 @@
-# CP2 - 2026-09-29 14:54 +0700 - base commit 13b6066 + working tree
+# CP4 - 2026-09-29 16:37 +0700 - HEAD aa6616d + working tree (chỉ report/evidence/docs thay đổi)
 $ python scripts/validate_logs.py
 --- Lab Verification Results ---
-Total log records analyzed: 713
+Total log records analyzed: 740
 Records with missing required fields: 0
 Records with missing enrichment (context): 0
-Unique correlation IDs found: 348
+Unique correlation IDs found: 362
 Potential PII leaks detected: 0
 
 --- Grading Scorecard (Estimates) ---

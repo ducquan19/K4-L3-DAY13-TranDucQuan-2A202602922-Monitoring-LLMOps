@@ -31,7 +31,7 @@ Mỗi alert dựa trên triệu chứng người dùng hoặc SLO, không dựa 
   1. Dashboard panel *Error rate and retrieval success*: xem breakdown `error_type` và retrieval success rate (guardrail ≥ 90%).
   2. Lọc log `event == "request_failed"`, đọc `error_type`, `payload.detail`, lấy `correlation_id`.
   3. Mở trace tương ứng; span có `level = ERROR` và `statusMessage` cho biết bước lỗi (ví dụ `retrieval: RuntimeError: Vector store timeout`).
-- Mitigation tạm thời: nếu lỗi ở retrieval thì bật fallback trả lời không có context hoặc rollback thay đổi gần nhất; nếu lỗi sau khi đổi prompt thì rollback label `production` (`python scripts/prompt_labels.py promote <version cũ>`).
+- Mitigation tạm thời: nếu lỗi ở retrieval thì bật fallback trả lời không có context hoặc rollback thay đổi gần nhất; nếu lỗi sau khi đổi prompt thì rollback label `production` (`python scripts/prompt_labels.py promote <version cũ>`). SDK cache prompt 60 s (`cache_ttl_seconds=60`), nên rollback cần tối đa khoảng 1 phút mới có hiệu lực trên mọi instance; cần rollback ngay thì restart API.
 - Owner: Tran Duc Quan (on-call)
 
 ## Alert 3

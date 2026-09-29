@@ -1,0 +1,29 @@
+# CP3 challenge day13-k4-l3a-monitoring-llmops-v1 - khoảng sự cố 2026-09-29 16:16:51–16:17:15 (+07) = 09:16:51–09:17:15 UTC
+# Langfuse GET /api/public/v2/observations, project day13-k4-l3a-2A202602922
+
+09:17:00.201 trace=4e7c4306a3982b88a65b01dd6534a0d7 cid=req-0fa955c4 feature=monitoring session=k4-l3a-challenge-s04 prompt=v1/production
+    lab-agent-run   AGENT         3833 ms  level=DEFAULT start=09:17:00.201
+    retrieval       RETRIEVER     2502 ms  level=DEFAULT start=09:17:00.201
+    llm-generation  GENERATION     157 ms  level=DEFAULT start=09:17:03.876
+09:17:04.038 trace=f2cf3f6bbcc303b89ec0284f92477151 cid=req-db61fe7a feature=monitoring session=k4-l3a-challenge-s01 prompt=v1/production
+    lab-agent-run   AGENT         2654 ms  level=DEFAULT start=09:17:04.038
+    retrieval       RETRIEVER     2502 ms  level=DEFAULT start=09:17:04.038
+    llm-generation  GENERATION     152 ms  level=DEFAULT start=09:17:06.540
+09:17:06.696 trace=d52cc16b96a1a9ba359cb55ab0788630 cid=req-dcd39b29 feature=monitoring session=k4-l3a-challenge-s02 prompt=v1/production
+    retrieval       RETRIEVER     2501 ms  level=DEFAULT start=09:17:06.696
+    lab-agent-run   AGENT         2653 ms  level=DEFAULT start=09:17:06.696
+    llm-generation  GENERATION     152 ms  level=DEFAULT start=09:17:09.197
+09:17:09.355 trace=df2fe500513f246532be753e8a4afb7d cid=req-86711335 feature=monitoring session=k4-l3a-challenge-s03 prompt=v1/production
+    lab-agent-run   AGENT         2655 ms  level=DEFAULT start=09:17:09.355
+    retrieval       RETRIEVER     2502 ms  level=DEFAULT start=09:17:09.355
+    llm-generation  GENERATION     153 ms  level=DEFAULT start=09:17:11.857
+09:17:12.021 trace=b71c7438a033ce9bc2263f95d4166a0d cid=req-dc91ad93 feature=monitoring session=k4-l3a-challenge-s05 prompt=v1/production
+    lab-agent-run   AGENT         2654 ms  level=DEFAULT start=09:17:12.021
+    retrieval       RETRIEVER     2501 ms  level=DEFAULT start=09:17:12.022
+    llm-generation  GENERATION     152 ms  level=DEFAULT start=09:17:14.523
+
+# Trace bình thường để so sánh (CP2, 14:48:24 +07):
+07:48:24.557 trace=e2c5a43a85cb0b316c2e8bba08a781db cid=req-290dbc78 feature=qa session=s08 prompt=v1/production
+    lab-agent-run   AGENT          152 ms  level=DEFAULT start=07:48:24.557
+    retrieval       RETRIEVER        0 ms  level=DEFAULT start=07:48:24.557
+    llm-generation  GENERATION     151 ms  level=DEFAULT start=07:48:24.558

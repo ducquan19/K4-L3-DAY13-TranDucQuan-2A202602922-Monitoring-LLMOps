@@ -1,0 +1,35 @@
+# CP3 fix verification - challenge day13-k4-l3a-monitoring-llmops-v1 - 2026-09-29 16:28 +0700
+# Lệnh: python scripts/inject_incident.py --disable (16:27:53 +07); python scripts/load_test.py --challenge --concurrency 5
+
+# Log incident + response_sent sau khi tắt rag_slow:
+{"service": "control", "payload": {"name": "rag_slow"}, "event": "incident_enabled", "correlation_id": "req-12f81093", "level": "warning", "ts": "2026-09-29T09:27:44.052491Z"}
+{"service": "control", "payload": {"name": "rag_slow"}, "event": "incident_disabled", "correlation_id": "req-22bc7c8a", "level": "warning", "ts": "2026-09-29T09:27:53.164026Z"}
+{"service": "api", "latency_ms": 153, "ttft_ms": 50, "tokens_in": 35, "tokens_out": 87, "cost_usd": 0.00141, "quality_score": 0.8, "tool_name": "retrieval", "tool_success": true, "payload": {"answer_preview": "Starter answer. You should improve this output logic and add better quality chec..."}, "event": "response_sent", "env": "dev", "feature": "monitoring", "user_id_hash": "dde2e75b20cf", "model": "claude-sonnet-4-5", "session_id": "k4-l3a-challenge-s01", "correlation_id": "req-70f48291", "level": "info", "ts": "2026-09-29T09:28:01.905402Z"}
+{"service": "api", "latency_ms": 152, "ttft_ms": 50, "tokens_in": 36, "tokens_out": 145, "cost_usd": 0.002283, "quality_score": 0.9, "tool_name": "retrieval", "tool_success": true, "payload": {"answer_preview": "Starter answer. You should improve this output logic and add better quality chec..."}, "event": "response_sent", "env": "dev", "feature": "monitoring", "user_id_hash": "4570299f37e2", "model": "claude-sonnet-4-5", "session_id": "k4-l3a-challenge-s04", "correlation_id": "req-a7c23e57", "level": "info", "ts": "2026-09-29T09:28:02.062680Z"}
+{"service": "api", "latency_ms": 153, "ttft_ms": 50, "tokens_in": 35, "tokens_out": 93, "cost_usd": 0.0015, "quality_score": 0.8, "tool_name": "retrieval", "tool_success": true, "payload": {"answer_preview": "Starter answer. You should improve this output logic and add better quality chec..."}, "event": "response_sent", "env": "dev", "feature": "monitoring", "user_id_hash": "ed72e61117f6", "model": "claude-sonnet-4-5", "session_id": "k4-l3a-challenge-s05", "correlation_id": "req-bc34eb2b", "level": "info", "ts": "2026-09-29T09:28:02.220752Z"}
+{"service": "api", "latency_ms": 154, "ttft_ms": 50, "tokens_in": 34, "tokens_out": 177, "cost_usd": 0.002757, "quality_score": 0.9, "tool_name": "retrieval", "tool_success": true, "payload": {"answer_preview": "Starter answer. You should improve this output logic and add better quality chec..."}, "event": "response_sent", "env": "dev", "feature": "monitoring", "user_id_hash": "aae0b94055a9", "model": "claude-sonnet-4-5", "session_id": "k4-l3a-challenge-s02", "correlation_id": "req-bba9d691", "level": "info", "ts": "2026-09-29T09:28:02.384877Z"}
+{"service": "api", "latency_ms": 152, "ttft_ms": 50, "tokens_in": 35, "tokens_out": 140, "cost_usd": 0.002205, "quality_score": 0.8, "tool_name": "retrieval", "tool_success": true, "payload": {"answer_preview": "Starter answer. You should improve this output logic and add better quality chec..."}, "event": "response_sent", "env": "dev", "feature": "monitoring", "user_id_hash": "dc9b2ec8da9d", "model": "claude-sonnet-4-5", "session_id": "k4-l3a-challenge-s03", "correlation_id": "req-364c9148", "level": "info", "ts": "2026-09-29T09:28:02.543988Z"}
+
+# Trace sau fix (Langfuse GET /api/public/v2/observations):
+09:28:01.745 trace=70f962bafefa03993e1643556ba36d9e cid=req-70f48291 feature=monitoring session=k4-l3a-challenge-s01 prompt=v1/production
+    llm-generation  GENERATION     160 ms  level=DEFAULT start=09:28:01.745
+    lab-agent-run   AGENT          160 ms  level=DEFAULT start=09:28:01.745
+    retrieval       RETRIEVER        0 ms  level=DEFAULT start=09:28:01.745
+09:28:01.908 trace=e3f3bf10096fe1b1f4b9473bb6035fa4 cid=req-a7c23e57 feature=monitoring session=k4-l3a-challenge-s04 prompt=v1/production
+    lab-agent-run   AGENT          154 ms  level=DEFAULT start=09:28:01.908
+    retrieval       RETRIEVER        0 ms  level=DEFAULT start=09:28:01.909
+    llm-generation  GENERATION     152 ms  level=DEFAULT start=09:28:01.910
+09:28:02.063 trace=7c79b62296fb8adce097ace714f463a0 cid=req-bc34eb2b feature=monitoring session=k4-l3a-challenge-s05 prompt=v1/production
+    lab-agent-run   AGENT          157 ms  level=DEFAULT start=09:28:02.063
+    retrieval       RETRIEVER        0 ms  level=DEFAULT start=09:28:02.063
+    llm-generation  GENERATION     157 ms  level=DEFAULT start=09:28:02.063
+09:28:02.220 trace=7d53b07e774c9825bf185bc26c060146 cid=req-bba9d691 feature=monitoring session=k4-l3a-challenge-s02 prompt=v1/production
+    lab-agent-run   AGENT          164 ms  level=DEFAULT start=09:28:02.220
+    retrieval       RETRIEVER        1 ms  level=DEFAULT start=09:28:02.230
+    llm-generation  GENERATION     152 ms  level=DEFAULT start=09:28:02.232
+09:28:02.389 trace=f32d392b941750a9c3c2304abdee776b cid=req-364c9148 feature=monitoring session=k4-l3a-challenge-s03 prompt=v1/production
+    lab-agent-run   AGENT          154 ms  level=DEFAULT start=09:28:02.389
+    retrieval       RETRIEVER        0 ms  level=DEFAULT start=09:28:02.391
+    llm-generation  GENERATION     151 ms  level=DEFAULT start=09:28:02.392
+
+# So sánh: trước fix P95 3832 ms / retrieval 2501–2502 ms; sau fix P95 154 ms / retrieval 0–1 ms

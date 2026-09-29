@@ -1,0 +1,15 @@
+# CP3 challenge day13-k4-l3a-monitoring-llmops-v1 - khoảng sự cố 2026-09-29 16:16:51–16:17:15 (+07) = 09:16:51–09:17:15 UTC
+
+$ python scripts/build_dashboard.py --end 2026-09-29T16:19:00+07:00
+data\dashboard.html | 15 records | 15:19–16:19
+  latency  p95=3832 ms (≤ 3000) BREACH
+  traffic  rate_per_minute=5.0/min (≥ 1) OK
+  errors   error_rate_pct=0.0% (≤ 2) OK
+  cost     total=$0.0120 (≤ 2.5) OK
+  tokens   sum_by_field=942 (≤ 50000) OK
+  quality  mean=0.84 (≥ 0.75) OK
+
+# latency_ms theo request (event response_sent), so với baseline CP2 lúc bình thường
+Baseline bình thường (CP2, 14:47–14:49 +07): n=110 P95=152 ms, TTFT P95=50 ms
+Challenge (16:16:59–16:17:15 +07): n=5 P95=3832 ms, min=2652 ms, TTFT P95=50 ms, error=0%
+Ngưỡng challenge latency_threshold_ms=2000 -> 5/5 request vượt
